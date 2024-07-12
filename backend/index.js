@@ -1,26 +1,14 @@
 const express = require("express");
-const app = express();
 const morgan = require("morgan");
 const cors = require("cors");
+require("dotenv").config();
+const Note = require("./models/note.js");
+
+const app = express();
 app.use(express.static("dist"));
 app.use(cors());
-let notes = [
-  {
-    id: 1,
-    content: "HTML is easy",
-    important: true,
-  },
-  {
-    id: 2,
-    content: "Browser can execute only JavaScript",
-    important: false,
-  },
-  {
-    id: 3,
-    content: "GET and POST are the most important methods of HTTP protocol",
-    important: true,
-  },
-];
+
+
 
 app.use(express.json());
 app.use(morgan("tiny"));
@@ -30,11 +18,9 @@ app.get("/", (request, response) => {
 });
 
 app.get("/api/notes", (request, response) => {
-  if (notes) {
+  Note.find({}).then((notes) => {
     response.json(notes);
-  } else {
-    response.status(404).end();
-  }
+  });
 });
 
 app.get("/api/notes/:id", (request, response) => {
